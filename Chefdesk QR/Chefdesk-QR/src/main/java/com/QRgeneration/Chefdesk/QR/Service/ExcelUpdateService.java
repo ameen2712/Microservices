@@ -34,7 +34,7 @@ public class ExcelUpdateService {
             String image1 = parseString(getValue(row1, 9));
             String tier1 = parseNullableString(getValue(row1, 10));
             String id2 = parseNumber(getValue(row2, 0));
-            String internetBooked = parseNumber(getValue(row1,11));
+            String internetBooked = parseNumber(getValue(row1, 11));
 //            System.out.println("internet booked  >>" + internetBooked);
 
             String query = String.format(
@@ -94,25 +94,7 @@ public class ExcelUpdateService {
         return index < row.length ? row[index] : "NULL";
     }
 
-    private List<String[]> readExcel(MultipartFile file) throws IOException {
-        List<String[]> data = new ArrayList<>();
-        try (InputStream inputStream = file.getInputStream(); Workbook workbook = new XSSFWorkbook(inputStream)) {
-            Sheet sheet = workbook.getSheetAt(0);
-            Iterator<Row> rowIterator = sheet.iterator();
 
-            while (rowIterator.hasNext()) {
-                Row row = rowIterator.next();
-                List<String> rowData = new ArrayList<>();
-                int lastColumn = row.getLastCellNum();
-                for (int i = 0; i < lastColumn; i++) {
-                    Cell cell = row.getCell(i, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK);
-                    rowData.add(cell.toString().trim().isEmpty() ? "NULL" : cell.toString().trim());
-                }
-                data.add(rowData.toArray(new String[0]));
-            }
-        }
-        return data;
-    }
 
 
     public List<String> processExcelFiles2(MultipartFile file1, MultipartFile file2) throws IOException {
@@ -151,7 +133,7 @@ public class ExcelUpdateService {
                             "UPDATE cineroyaldb.screen_seat_mgmt SET xtertain_row_no='%s' WHERE id=%s;",
                             rowNo1, id2
                     );
-                    System.err.println( query);
+                    System.err.println(query);
                     updateQueries.add(query);
                     break; // Stop searching once a match is found
                 }
@@ -177,6 +159,7 @@ public class ExcelUpdateService {
         }
         return value;
     }
+
     public List<String> processExcelFiles3(MultipartFile file1, MultipartFile file2) throws IOException {
         List<String[]> file1Data = readExcel(file1);
         List<String[]> file2Data = readExcel(file2);
@@ -209,6 +192,25 @@ public class ExcelUpdateService {
 
         return updateQueries;
     }
+            private List<String[]> readExcel(MultipartFile file) throws IOException {
+                List<String[]> data = new ArrayList<>();
+                try (InputStream inputStream = file.getInputStream(); Workbook workbook = new XSSFWorkbook(inputStream)) {
+                    Sheet sheet = workbook.getSheetAt(0);
+                    Iterator<Row> rowIterator = sheet.iterator();
+
+                    while (rowIterator.hasNext()) {
+                        Row row = rowIterator.next();
+                        List<String> rowData = new ArrayList<>();
+                        int lastColumn = row.getLastCellNum();
+                        for (int i = 0; i < lastColumn; i++) {
+                            Cell cell = row.getCell(i, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK);
+                            rowData.add(cell.toString().trim().isEmpty() ? "NULL" : cell.toString().trim());
+                        }
+                        data.add(rowData.toArray(new String[0]));
+                    }
+                }
+                return data;
+            }
 
 
 }

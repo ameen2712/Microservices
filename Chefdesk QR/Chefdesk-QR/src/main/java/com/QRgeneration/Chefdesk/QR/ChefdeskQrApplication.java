@@ -9,5 +9,4 @@ public class ChefdeskQrApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(ChefdeskQrApplication.class, args);
 	}
-
 }
